@@ -371,15 +371,51 @@ public class UserProcess {
         return 0;
     }
 
-    private int handleRead(int descriptor, int bufferPointer, int size){
+    //argumnent0 file descriptor, argument1 buffer size, argument2 count
+    private int handleRead(int argument0, int argument1, int argument2) {
+		//look file OpenFile
+		OpenFile file = myFileSlots[argument0];
+		if (file == null) {
+			return -1;
+		}
 
-        return 0;
-    }
+		//create byte buffer size of content
+		byte buffer[] = new byte[argument2];
+		int byteReadC = file.read(buffer, 0, argument2);
+		if (byteReadC == -1) {
+			System.out.println("Exeption: File Cannot Be Read");
+			return -1;
+		}
+		//store what was read into the virtual memory
+		int exit = writeVirtualMemory(argument1, buffer, 0, byteReadC);
+		return exit;
+	}
 
-    private int handleWrite(int descriptor, int bufferPointer, int size){
+	private int handleWrite(int argument0, int argument1, int argument2) {
+		//look file OpenFile
+		OpenFile file = myFileSlots[argument0];
+		if (file == null) {
+			return -1;
+		}
+		//create byte buffer size of content
+		byte[] buffer = new byte[argument2];
 
-        return 0;
-    }
+		// read data from argument1 to buffer
+		int read = readVirtualMemory(argument1, buffer, 0, argument2);
+
+		//write the bytes from the buffer
+		int write = file.write(buffer, 0, w);
+
+		if (write == -1 || read == -1) {
+			System.out.println("Exception: Cannot Write to File");
+		}
+
+        //check if we wrote everything otherwise throw exep
+		if (write < argument2) {
+			return -1;
+		}
+		return write;
+	}
 
     private int handleClose(int descriptor) {
 
