@@ -471,21 +471,19 @@ public class UserProcess {
 	{
 		return -1;
 	}
-	System.out.println("Check 1");
 	Openfile selectedFile = myFileSlots[descriptor];
 
 	if(selectedFile == null)
 	{
 		return -1;
 	}
-	System.out.println("Check 2");
+	myFileSlots.remove(descriptor);
 	selectedFile.close();
 
 	if(selectedFile.length != -1)
 	{
 		return -1;
 	}
-	System.out.println("Check 3");
 	myFileSlots[descriptor] = null;
 
 	return 0;
