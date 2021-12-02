@@ -472,7 +472,7 @@ public class UserProcess {
 		return -1;
 	}
 
-	Openfile selectedFile = this.openFiles[descriptor];
+	Openfile selectedFile = myFileSlots[descriptor];
 
 	if(selectedFile == null || selectedFile.length() < 0)
 	{
@@ -486,7 +486,7 @@ public class UserProcess {
 		return -1;
 	}
 
-	this.openFiles[descriptor] = null;
+	myFileSlots[descriptor] = null;
 
 	return 0;
     }
