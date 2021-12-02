@@ -465,14 +465,50 @@ public class UserProcess {
 		return write;
 	}
 
-    private int handleClose(int descriptor) {
+    private int handleClose(int descriptor)
+    {
+	if(descriptor < 0 || descriptor > 0)
+	{
+		return -1;
+	}
 
-        return 0;
+	Openfile selectedFile = this.openFiles[descriptor];
+
+	if(selectedFile == null || selectedFile.length() < 0)
+	{
+		return -1;
+	}
+
+	selectedFile.close();
+
+	if(selectedFile.length != -1)
+	{
+		return -1;
+	}
+
+	this.openFiles[descriptor] = null;
+
+	return 0;
     }
 
-    private int handleUnlink(int namePointer) {
+    private int handleUnlink(int namePointer) 
+    {
 
-        return 0;
+        String FileName = readVirtualMemoryString(address, 256);
+
+	if(FileName == null || FileName.length() == 0)
+	{
+		return -1;
+	}
+
+	boolean FileClosed = ThreadedKernel.fileSystem.remove(FileName);
+
+	if(!FileClosed)
+	{
+		return -1;
+	}
+
+	return 0;
     }
 
     private static final int
