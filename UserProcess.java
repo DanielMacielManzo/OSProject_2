@@ -467,7 +467,7 @@ public class UserProcess {
 
     private int handleClose(int descriptor)
     {
-	if(descriptor < 0 || descriptor > 0)
+	if(descriptor < 0 || descriptor > myFileSlots.size())
 	{
 		return -1;
 	}
