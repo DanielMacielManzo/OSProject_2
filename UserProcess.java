@@ -361,17 +361,65 @@ public class UserProcess {
         return 0;
     }
 
+    public int handleCreate(int arg0) {
+    	
+    	if(arg0 < 0)
+    		return -1;
+    	String filename = readVirtualMemoryString(arg0,256);
+    	if(filename != null) {
+    		OpenFile file = ThreadedKernel.fileSystem.open(filename,true);
+    		if(file == null)
+    		{
+    			return -1; //file can not be open
+    		}
+    		else
+    		{
+    			for(int i = 0;i<16;i++)
+    			{
+    				if(myFileSlots[i]==null)
+    				{
+    					myFileSlots[i] = file;//put to file descriptor
+    					return i;
+    				}
+    			}
+    			//return -1;
+    		}
+    	}
+    	return -1;
+    }
+
     private int handleJoin(int pid, int statusPointer){
 
         return 0;
     }
 
-    private int handleOpen(int namePointer){
-    
-        return 0;
+    private int handleOpen(int argument0)
+    {
+    	//String name = "testing";
+    	String filename;
+    	filename = readVirtualMemoryString(argument0,256);
+    	OpenFile file = ThreadedKernel.fileSystem.open(filename,false);
+    	if(file == null)
+    	{
+    		return -1; //file can not be open
+    	}
+    	else
+    	{
+    		for(int i = 0;i<16;i++)
+    		{
+    			if(myFileSlots[i]==null)
+    			{
+    				myFileSlots[i] = file;//put to file descriptor
+    				return i;
+    			}
+    		}
+    		//return -1;
+    	}
+    	return -1;
+    	//OpenFile executable = ThreadedKernel.fileSystem.open(name, false);
+    	//return argument0;
     }
 
-    //argumnent0 file descriptor, argument1 buffer size, argument2 count
     private int handleRead(int argument0, int argument1, int argument2) {
 		//look file OpenFile
 		OpenFile file = myFileSlots[argument0];
@@ -391,7 +439,7 @@ public class UserProcess {
 		return exit;
 	}
 
-	private int handleWrite(int argument0, int argument1, int argument2) {
+    private int handleWrite(int argument0, int argument1, int argument2) {
 		//look file OpenFile
 		OpenFile file = myFileSlots[argument0];
 		if (file == null) {
@@ -404,7 +452,7 @@ public class UserProcess {
 		int read = readVirtualMemory(argument1, buffer, 0, argument2);
 
 		//write the bytes from the buffer
-		int write = file.write(buffer, 0, w);
+		int write = file.write(buffer, 0, buffer.length);
 
 		if (write == -1 || read == -1) {
 			System.out.println("Exception: Cannot Write to File");
@@ -529,33 +577,6 @@ public class UserProcess {
 	}
     };
     
-    public int handleCreate(int arg0) {
-    	
-    	if(arg0 < 0)
-    		return -1;
-    	String filename = readVirtualMemoryString(arg0,256);
-    	if(filename != null) {
-    		OpenFile file = ThreadedKernel.fileSystem.open(filename,true);
-	    	if(file == null)
-	    	{
-	    		return -1; //file can not be open
-	    	}
-	    	else
-	    	{
-	    		for(int i = 0;i<16;i++)
-	    		{
-	    			if(myFileSlots[i]==null)
-	    			{
-	    				myFileSlots[i] = file;//put to file descriptor
-	    				return i;
-	    			}
-	    		}
-	    		//return -1;
-	    	}
-    	}
-    	return -1;
-    }
-
 
     /** The program being run by this process. */
     protected Coff coff;
