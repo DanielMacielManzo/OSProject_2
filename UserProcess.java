@@ -467,25 +467,25 @@ public class UserProcess {
 
     private int handleClose(int descriptor)
     {
-	if(descriptor < 0 || descriptor > myFileSlots.size())
+	if(descriptor < 0 || descriptor > myFileSlots.length)
 	{
 		return -1;
 	}
-
+	System.out.println("Check 1");
 	Openfile selectedFile = myFileSlots[descriptor];
 
-	if(selectedFile == null || selectedFile.length() < 0)
+	if(selectedFile == null)
 	{
 		return -1;
 	}
-
+	System.out.println("Check 2");
 	selectedFile.close();
 
 	if(selectedFile.length != -1)
 	{
 		return -1;
 	}
-
+	System.out.println("Check 3");
 	myFileSlots[descriptor] = null;
 
 	return 0;
